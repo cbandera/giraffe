@@ -22,6 +22,7 @@ _BIC = re.compile(r"(?:BIC|SWIFT)(?:[-/ ]?Code)?[^A-Za-z0-9\n]{0,5}([A-Z]{6}[A-Z
 _PAYEE_KEY = re.compile(
     r"(?:Kontoinhaber(?:in)?|Zahlungsempf(?:ä|ae)nger|Empf(?:ä|ae)nger|Inhaber|Account\s+holder|Beneficiary)"
     r"[ \t]*[:\-][ \t]*(.+?)(?:[ \t]{2,}|$)", re.I | re.M)
+_ANSCHRIFT = re.compile(r"^[ \t]*Anschrift\b[ \t]*:?[ \t]*(.*)$", re.I | re.M)
 _NOT_NAME = re.compile(r"iban|bic|konto|bank|sparkasse|volksbank|www\.|@|tel|fax|seite|page", re.I)
 _NON_EUR = re.compile(r"\b(CHF|USD|GBP|SEK|NOK|DKK|PLN|CZK|HUF)\b|[$£]")
 
@@ -60,6 +61,16 @@ def _payee(text: str, iban: str) -> str:
     m = _PAYEE_KEY.search(text)
     if m:
         return m.group(1).strip()
+    m = _ANSCHRIFT.search(text)
+    if m:
+        # "Anschrift: Name" on one line, otherwise the first non-empty line below it
+        rest = m.group(1).strip()
+        if not rest:
+            following = text[m.end():].splitlines()
+            rest = next((l.strip() for l in following if l.strip()), "")
+        name = re.split(r"[ \t]{2,}", rest)[0].strip()
+        if name:
+            return name
     lines = text.splitlines()
     for i, line in enumerate(lines):
         if iban and iban in iban_mod.normalize(line):

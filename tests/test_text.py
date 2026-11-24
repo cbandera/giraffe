@@ -61,3 +61,13 @@ def test_foreign_currency_warns():
 def test_payee_keyword_end_of_line():
     d = extract_from_text("Kontoinhaber: Muster GmbH\nIBAN DE89370400440532013000")
     assert d.payee == "Muster GmbH"
+
+
+def test_payee_anschrift_next_line():
+    d = extract_from_text("Anschrift\nMuster GmbH\nMusterstr. 1\n12345 Stadt\nIBAN DE89370400440532013000")
+    assert d.payee == "Muster GmbH"
+
+
+def test_payee_anschrift_same_line_and_columns():
+    d = extract_from_text("Anschrift: Muster GmbH    Telefon 123\nIBAN DE89370400440532013000")
+    assert d.payee == "Muster GmbH"
