@@ -71,3 +71,10 @@ def test_payee_anschrift_next_line():
 def test_payee_anschrift_same_line_and_columns():
     d = extract_from_text("Anschrift: Muster GmbH    Telefon 123\nIBAN DE89370400440532013000")
     assert d.payee == "Muster GmbH"
+
+
+def test_payee_anschrift_footer_columns():
+    t = ("Anschrift                      Bankverbindung                Kontakt\n"
+         "Muster Sanitär&Heizung         DE89 3704 0044 0532 0130 00   +49 123\n"
+         "Musterstr. 74\n")
+    assert extract_from_text(t).payee == "Muster Sanitär&Heizung"

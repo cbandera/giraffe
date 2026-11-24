@@ -22,7 +22,7 @@ _BIC = re.compile(r"(?:BIC|SWIFT)(?:[-/ ]?Code)?[^A-Za-z0-9\n]{0,5}([A-Z]{6}[A-Z
 _PAYEE_KEY = re.compile(
     r"(?:Kontoinhaber(?:in)?|Zahlungsempf(?:ä|ae)nger|Empf(?:ä|ae)nger|Inhaber|Account\s+holder|Beneficiary)"
     r"[ \t]*[:\-][ \t]*(.+?)(?:[ \t]{2,}|$)", re.I | re.M)
-_ANSCHRIFT = re.compile(r"^[ \t]*Anschrift\b[ \t]*:?[ \t]*(.*)$", re.I | re.M)
+_ANSCHRIFT = re.compile(r"^[ \t]*Anschrift\b[ \t]*(:?)[ \t]*(.*)$", re.I | re.M)
 _NOT_NAME = re.compile(r"iban|bic|konto|bank|sparkasse|volksbank|www\.|@|tel|fax|seite|page", re.I)
 _NON_EUR = re.compile(r"\b(CHF|USD|GBP|SEK|NOK|DKK|PLN|CZK|HUF)\b|[$£]")
 
@@ -64,7 +64,8 @@ def _payee(text: str, iban: str) -> str:
     m = _ANSCHRIFT.search(text)
     if m:
         # "Anschrift: Name" on one line, otherwise the first non-empty line below it
-        rest = m.group(1).strip()
+        # same-line text only counts after a colon; otherwise it is a column header row
+        rest = m.group(2).strip() if m.group(1) else ""
         if not rest:
             following = text[m.end():].splitlines()
             rest = next((l.strip() for l in following if l.strip()), "")
