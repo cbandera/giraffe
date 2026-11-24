@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Giraffe
+GenericName=GiroCode generator
+Comment=Create a GiroCode (EPC QR) from an invoice
+Exec=giraffe %f
+Icon=io.github.giraffe.Giraffe
+Terminal=false
+Categories=Office;Finance;GTK;
+MimeType=application/pdf;
+StartupNotify=true
+StartupWMClass=io.github.giraffe.Giraffe
