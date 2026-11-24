@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="data/icons/io.github.giraffe.Giraffe.svg" width="112" alt="Giraffe logo">
+</p>
+
 # Giraffe
 
 Turn an invoice into a **GiroCode**: Giraffe reads the payment details from a PDF (or from
