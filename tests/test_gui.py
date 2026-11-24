@@ -13,11 +13,13 @@ IBAN: DE89 3704 0044 0532 0130 00
 """
 
 
-def test_window_smoke():
+def test_window_smoke(monkeypatch):
     from giraffe.app import GiraffeApp
     from giraffe.window import GiraffeWindow
     from gi.repository import GLib
 
+    # distinct ID so a running real instance doesn't swallow the activation
+    monkeypatch.setattr('giraffe.app.APP_ID', 'io.github.giraffe.GiraffeTest')
     app = GiraffeApp()
     result = {}
 
